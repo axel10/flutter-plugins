@@ -10,7 +10,7 @@ extension WindowId {
     }
 }
 
-class CustomWindow: NSWindow {
+class CustomWindow: NSPanel {
 
     init(configuration: WindowConfiguration) {
         super.init(
@@ -19,6 +19,20 @@ class CustomWindow: NSWindow {
             defer: false)
 
         self.isReleasedWhenClosed = false
+    }
+
+    override var canBecomeKey: Bool {
+        if styleMask.contains(.nonactivatingPanel) {
+            return false
+        }
+        return super.canBecomeKey
+    }
+
+    override var canBecomeMain: Bool {
+        if styleMask.contains(.nonactivatingPanel) {
+            return false
+        }
+        return super.canBecomeMain
     }
 
     deinit {
