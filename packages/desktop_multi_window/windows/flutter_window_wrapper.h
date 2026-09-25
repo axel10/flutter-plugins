@@ -2,11 +2,19 @@
 #define DESKTOP_MULTI_WINDOW_WINDOWS_FLUTTER_WINDOW_WRAPPER_H_
 
 #include <Windows.h>
+#include <dwmapi.h>
 #include <flutter/encodable_value.h>
 #include <flutter/method_channel.h>
 #include <flutter/method_result.h>
 #include <memory>
 #include <string>
+
+#ifndef DWMWA_USE_IMMERSIVE_DARK_MODE
+#define DWMWA_USE_IMMERSIVE_DARK_MODE 20
+#endif
+#ifndef DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1
+#define DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 19
+#endif
 
 class FlutterWindowWrapper {
  public:
@@ -49,6 +57,18 @@ class FlutterWindowWrapper {
     } else if (method == "window_hide") {
       if (hwnd_) {
         ::ShowWindow(hwnd_, SW_HIDE);
+      }
+      result->Success();
+    } else if (method == "window_set_dark_mode") {
+      if (hwnd_ && arguments) {
+        auto it = arguments->find(flutter::EncodableValue("darkMode"));
+        if (it != arguments->end() && std::holds_alternative<bool>(it->second)) {
+          BOOL enable_dark_mode = std::get<bool>(it->second) ? TRUE : FALSE;
+          ::DwmSetWindowAttribute(hwnd_, DWMWA_USE_IMMERSIVE_DARK_MODE,
+                                  &enable_dark_mode, sizeof(enable_dark_mode));
+          ::DwmSetWindowAttribute(hwnd_, DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1,
+                                  &enable_dark_mode, sizeof(enable_dark_mode));
+        }
       }
       result->Success();
     } else {

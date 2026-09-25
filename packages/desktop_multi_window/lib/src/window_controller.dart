@@ -84,6 +84,9 @@ class WindowController {
 
   Future<void> hide() => _callWindowMethod('window_hide', {});
 
+  Future<void> setDarkMode(bool isDark) =>
+      _callWindowMethod('window_set_dark_mode', {'darkMode': isDark});
+
   @optionalTypeArgs
   Future<T?> invokeMethod<T>(String method, [dynamic arguments]) =>
       _windowChannel.invokeMethod<T>(method, arguments);
