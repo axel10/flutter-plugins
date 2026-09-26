@@ -71,6 +71,16 @@ class FlutterWindowWrapper {
         }
       }
       result->Success();
+    } else if (method == "window_set_always_on_top") {
+      if (hwnd_ && arguments) {
+        auto it = arguments->find(flutter::EncodableValue("alwaysOnTop"));
+        if (it != arguments->end() && std::holds_alternative<bool>(it->second)) {
+          bool is_always_on_top = std::get<bool>(it->second);
+          ::SetWindowPos(hwnd_, is_always_on_top ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0,
+                         SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        }
+      }
+      result->Success();
     } else {
       result->Error("-1", "unknown method: " + method);
     }

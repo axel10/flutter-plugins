@@ -32,6 +32,8 @@ class FlutterWindow {
 
   void SetDarkMode(bool is_dark);
 
+  void SetAlwaysOnTop(bool is_always_on_top);
+
   void HandleWindowMethod(const gchar* method,
                           FlValue* arguments,
                           FlMethodCall* method_call);

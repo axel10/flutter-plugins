@@ -87,6 +87,9 @@ class WindowController {
   Future<void> setDarkMode(bool isDark) =>
       _callWindowMethod('window_set_dark_mode', {'darkMode': isDark});
 
+  Future<void> setAlwaysOnTop(bool isAlwaysOnTop) =>
+      _callWindowMethod('window_set_always_on_top', {'alwaysOnTop': isAlwaysOnTop});
+
   @optionalTypeArgs
   Future<T?> invokeMethod<T>(String method, [dynamic arguments]) =>
       _windowChannel.invokeMethod<T>(method, arguments);

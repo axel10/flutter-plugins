@@ -49,6 +49,13 @@ void FlutterWindow::SetDarkMode(bool is_dark) {
   }
 }
 
+void FlutterWindow::SetAlwaysOnTop(bool is_always_on_top) {
+  if (window_ != nullptr) {
+    gtk_window_set_keep_above(GTK_WINDOW(window_),
+                              is_always_on_top ? TRUE : FALSE);
+  }
+}
+
 void FlutterWindow::HandleWindowMethod(const gchar* method,
                                        FlValue* arguments,
                                        FlMethodCall* method_call) {
@@ -65,6 +72,14 @@ void FlutterWindow::HandleWindowMethod(const gchar* method,
       FlValue* dark_val = fl_value_lookup_string(arguments, "darkMode");
       if (dark_val != nullptr && fl_value_get_type(dark_val) == FL_VALUE_TYPE_BOOL) {
         SetDarkMode(fl_value_get_bool(dark_val));
+      }
+    }
+    response = FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+  } else if (strcmp(method, "window_set_always_on_top") == 0) {
+    if (arguments != nullptr && fl_value_get_type(arguments) == FL_VALUE_TYPE_MAP) {
+      FlValue* top_val = fl_value_lookup_string(arguments, "alwaysOnTop");
+      if (top_val != nullptr && fl_value_get_type(top_val) == FL_VALUE_TYPE_BOOL) {
+        SetAlwaysOnTop(fl_value_get_bool(top_val));
       }
     }
     response = FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));

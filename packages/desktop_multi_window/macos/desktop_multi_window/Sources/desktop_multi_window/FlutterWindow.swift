@@ -125,6 +125,11 @@ class FlutterWindow: NSObject {
                 window.appearance = isDark ? NSAppearance(named: .darkAqua) : NSAppearance(named: .aqua)
             }
             result(nil)
+        case "window_set_always_on_top":
+            if let args = arguments as? [String: Any], let isAlwaysOnTop = args["alwaysOnTop"] as? Bool {
+                window.level = isAlwaysOnTop ? .floating : .normal
+            }
+            result(nil)
         default:
             result(FlutterError(code: "-1", message: "unknown method \(method)", details: nil))
         }
