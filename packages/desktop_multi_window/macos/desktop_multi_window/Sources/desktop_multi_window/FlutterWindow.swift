@@ -19,6 +19,7 @@ class CustomWindow: NSPanel {
             defer: false)
 
         self.isReleasedWhenClosed = false
+        self.hidesOnDeactivate = false
     }
 
     override var canBecomeKey: Bool {
