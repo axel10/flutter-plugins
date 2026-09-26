@@ -120,6 +120,11 @@ class FlutterWindow: NSObject {
         case "window_hide":
             window.orderOut(nil)
             result(nil)
+        case "window_set_dark_mode":
+            if let args = arguments as? [String: Any], let isDark = args["darkMode"] as? Bool {
+                window.appearance = isDark ? NSAppearance(named: .darkAqua) : NSAppearance(named: .aqua)
+            }
+            result(nil)
         default:
             result(FlutterError(code: "-1", message: "unknown method \(method)", details: nil))
         }

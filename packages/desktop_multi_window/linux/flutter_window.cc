@@ -31,6 +31,24 @@ void FlutterWindow::Hide() {
   }
 }
 
+void FlutterWindow::SetDarkMode(bool is_dark) {
+  GtkSettings* settings = window_ != nullptr ? gtk_widget_get_settings(window_)
+                                             : gtk_settings_get_default();
+  if (settings != nullptr) {
+    g_object_set(settings, "gtk-application-prefer-dark-theme",
+                 is_dark ? TRUE : FALSE, nullptr);
+    if (!is_dark) {
+      g_autofree gchar* theme_name = nullptr;
+      g_object_get(settings, "gtk-theme-name", &theme_name, nullptr);
+      if (theme_name != nullptr && g_str_has_suffix(theme_name, "-dark")) {
+        g_autofree gchar* light_theme_name =
+            g_strndup(theme_name, strlen(theme_name) - 5);
+        g_object_set(settings, "gtk-theme-name", light_theme_name, nullptr);
+      }
+    }
+  }
+}
+
 void FlutterWindow::HandleWindowMethod(const gchar* method,
                                        FlValue* arguments,
                                        FlMethodCall* method_call) {
@@ -41,6 +59,14 @@ void FlutterWindow::HandleWindowMethod(const gchar* method,
     response = FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
   } else if (strcmp(method, "window_hide") == 0) {
     Hide();
+    response = FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+  } else if (strcmp(method, "window_set_dark_mode") == 0) {
+    if (arguments != nullptr && fl_value_get_type(arguments) == FL_VALUE_TYPE_MAP) {
+      FlValue* dark_val = fl_value_lookup_string(arguments, "darkMode");
+      if (dark_val != nullptr && fl_value_get_type(dark_val) == FL_VALUE_TYPE_BOOL) {
+        SetDarkMode(fl_value_get_bool(dark_val));
+      }
+    }
     response = FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
   } else {
     g_autofree gchar* error_msg = g_strdup_printf("unknown method: %s", method);

@@ -30,6 +30,8 @@ class FlutterWindow {
 
   void Hide();
 
+  void SetDarkMode(bool is_dark);
+
   void HandleWindowMethod(const gchar* method,
                           FlValue* arguments,
                           FlMethodCall* method_call);
